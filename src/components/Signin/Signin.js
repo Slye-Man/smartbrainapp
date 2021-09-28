@@ -1,7 +1,41 @@
 import React from 'react';
 
-const Signin = ({ onRouteChange }) => {
-    return (
+class Signin extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            signInEmail: '',
+            signInPassword: '',
+        }
+    }
+    onEmailChange = (event) => {
+            this.setState({signInEmail: event.target.value})
+        }
+
+    onPasswordChange = (event) => {
+        this.setState({signInPassword: event.target.value})
+    }
+
+    onSubmitSignIn = () => {
+        fetch('http://localhost:3000/signin', {
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                email: this.state.signInEmail,
+                password: this.state.signInPassword
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data === 'success') {
+                    this.props.onRouteChange('home');
+                }
+            })
+    }
+
+    render() {
+        const { onRouteChange } = this.props;
+        return (
         <article className='br3 ba b--black-10 mv4 w-100 w-50-m w-25-1 mw6 shadow-5 center'>
             <main className="pa4 black-80">
                 <div className="measure">
@@ -15,6 +49,7 @@ const Signin = ({ onRouteChange }) => {
                         </label>
 
                         <input 
+                        onChange={this.onEmailChange}
                         className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
                         type="email" 
                         name="email-address"  
@@ -29,6 +64,7 @@ const Signin = ({ onRouteChange }) => {
                         </label>
 
                         <input 
+                        onChange={this.onPasswordChange}
                         className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
                         type="password" 
                         name="password"  
@@ -38,7 +74,7 @@ const Signin = ({ onRouteChange }) => {
                     </fieldset>
                     <div className="">
                     <input 
-                    onClick={() => onRouteChange('home')}
+                    onClick={this.onSubmitSignIn}
                     className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" 
                     type="submit" 
                     value="Sign in" 
@@ -50,7 +86,8 @@ const Signin = ({ onRouteChange }) => {
                 </div>
             </main>
         </article>
-    )
+        );
+    }
 }
 
 export default Signin;
